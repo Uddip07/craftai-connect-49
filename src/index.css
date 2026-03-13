@@ -1,7 +1,3 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 @import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,500&family=Outfit:wght@300;400;500;600;700&display=swap');
 
 @layer base {
@@ -87,13 +83,19 @@
 
 @layer base {
   * {
-    @apply border-border;
+    border-color: var(--border);
+    border-width: 1px;
+    border-style: solid;
   }
   body {
-    @apply bg-background text-foreground font-sans antialiased;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: 'Outfit', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   h1, h2, h3 {
-    @apply font-serif;
+    font-family: 'Newsreader', serif;
   }
 }
 
@@ -108,13 +110,26 @@
     box-shadow: var(--shadow-float);
   }
   .ai-zone {
-    @apply bg-secondary/5 rounded-2xl p-4;
+    background-color: hsl(var(--secondary) / 0.05);
+    border-radius: 1rem;
+    padding: 1rem;
   }
   .artisan-image {
-    @apply aspect-square object-cover outline outline-1 outline-black/10 -outline-offset-1 rounded-2xl;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    outline: 1px solid rgba(0,0,0,0.1);
+    outline-offset: -1px;
+    border-radius: 1rem;
   }
   .section-padding {
-    @apply py-16 md:py-24;
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+  }
+  @media (min-width: 768px) {
+    .section-padding {
+      padding-top: 6rem;
+      padding-bottom: 6rem;
+    }
   }
   .fluid-hero {
     font-size: clamp(2.5rem, 5vw, 4.5rem);
