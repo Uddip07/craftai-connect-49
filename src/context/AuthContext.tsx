@@ -10,6 +10,9 @@ import {
   type UserRole,
 } from "@/lib/auth";
 
+import { auth, provider } from "@/firebase";
+import { signInWithPopup, onAuthStateChanged, signOut } from "firebase/auth";
+
 interface AuthActionResult {
   ok: boolean;
   message?: string;
@@ -22,6 +25,7 @@ interface AuthContextValue {
   isLoading: boolean;
   login: (input: { email: string; password: string }) => AuthActionResult;
   signup: (input: { name: string; email: string; password: string; role: UserRole }) => AuthActionResult;
+  loginWithGoogle: () => Promise<AuthUser | null>;
   completeOnboarding: (profile: UserProfile) => AuthActionResult;
   logout: () => void;
 }
@@ -33,8 +37,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setUser(getSessionUser());
-    setIsLoading(false);
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      if (firebaseUser) {
+        const newUser: AuthUser = {
+          id: firebaseUser.uid,
+          email: firebaseUser.email || "",
+          name: firebaseUser.displayName || "",
+          role: "buyer",
+          onboardingComplete: true,
+        };
+
+        setUser(newUser);
+      } else {
+        setUser(getSessionUser());
+      }
+
+      setIsLoading(false);
+    });
+
+    return () => unsubscribe();
   }, []);
 
   const login = (input: { email: string; password: string }) => {
@@ -57,6 +78,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return result;
   };
 
+  const loginWithGoogle = async () => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const firebaseUser = result.user;
+
+      const newUser: AuthUser = {
+        id: firebaseUser.uid,
+        email: firebaseUser.email || "",
+        name: firebaseUser.displayName || "",
+        role: "buyer",
+        onboardingComplete: true,
+      };
+
+      setUser(newUser);
+
+      return newUser;
+    } catch (error) {
+      console.error("Google login error:", error);
+      return null;
+    }
+  };
+
   const completeOnboarding = (profile: UserProfile) => {
     if (!user) {
       return {
@@ -77,7 +120,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return result;
   };
 
-  const logout = () => {
+  const logout = async () => {
+    await signOut(auth);
     logoutUser();
     setUser(null);
   };
@@ -90,6 +134,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         isLoading,
         login,
         signup,
+        loginWithGoogle,
         completeOnboarding,
         logout,
       }}

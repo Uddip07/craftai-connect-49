@@ -1,4 +1,4 @@
-export type UserRole = "artisan" | "customer";
+export type UserRole = "artisan" | "buyer";
 
 export interface ArtisanProfile {
   shopName: string;
