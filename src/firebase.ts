@@ -2,13 +2,12 @@ import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyC6186h4t6q5mEvp07P0cGGsmfJZ4fuLAg",
-  authDomain: "craftai-connect.firebaseapp.com",
-  projectId: "craftai-connect",
-  storageBucket: "craftai-connect.firebasestorage.app",
-  messagingSenderId: "961108955276",
-  appId: "1:961108955276:web:ee0ad8dc343692b98eaba9",
-  measurementId: "G-T8QR3X5S91"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
 const app = initializeApp(firebaseConfig);
